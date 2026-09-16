@@ -82,9 +82,11 @@ class Garage{
 
         }
         void print(){
+            throw "Print ERROR";
             std::cout <<  "Our garage: "<< "\t";
             for (long long unsigned int i = 0; i < vehicles.size(); i++){
                 vehicles[i].print_Info() ;
+            
             }
         }
         template <typename T> int find (T name ){
@@ -108,17 +110,16 @@ class Garage{
 };
 
 int main(){
+    try{
     Car car{"Toyota", "Camry", 2022, 2900000, 4, "Sedan"};
-    Truck truck{"Ford", "F-MAX", 2023, 6000000, "6162", "13t"};
     auto g = Garage();
     g.add(car);
-    g.add(truck);
-    g.print();   
-    std::cout << car[0] << "\n" << car[1] << "\n" << car[2] << "\n" << car[3]<< std::endl;
-    std::cout << g.find("F-MAX") << std::endl;// 1
-    std::cout << g.find("Ferrari") << std::endl;//-1
-    std::cout << g.find(2023) << std::endl;//1
-    std::cout << g.find(2024) << std::endl;//-1
+    g.print();
+    }
 
+    catch( const char* error) {
+        std::cout << error << std::endl;
+    }
+    
     return 0;
     }
