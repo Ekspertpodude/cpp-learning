@@ -20,6 +20,16 @@ class Vehicle {
         void print_Info (){
             std::cout << model << "\t" ;
         }
+        std::string operator[](unsigned index) const{
+             switch (index)
+        {
+        case 0 : return make;
+        case 1: return model;
+        case 2: return std:: to_string (year) ;
+        case 3: return  std:: to_string (price);
+        default: return "Bad Index";
+            }   
+        }
 
 
 
@@ -34,18 +44,7 @@ class Car: public virtual Vehicle {
             this->num_doors = num_doors;
             this->body_style = body_style;
         }
-        std::string operator[](unsigned index) const{
-             switch (index)
-        {
-        case 0 : return make;
-        case 1: return model;
-        case 2: return std:: to_string (year) ;
-        case 3: return  std:: to_string (price);
-        case 4: return std::to_string(num_doors);
-        case 5: return body_style;
-        default: return "Bad Index";
-            }   
-        }
+        
        
 
         
@@ -86,13 +85,17 @@ class Garage{
                 vehicles[i].print_Info() ;
             }
         }
-
-
-
+        int find(std::string name){
+            for (long long unsigned int i = 0 ; i < vehicles.size();i++){
+                if (vehicles[i][1] == name){
+                    
+                    return i ;
+                }
+                
+                }
+                return -1;
+            }
 };
-
-
-
 
 int main(){
     Car car{"Toyota", "Camry", 2022, 2900000, 4, "Sedan"};
@@ -101,4 +104,7 @@ int main(){
     g.add(car);
     g.add(truck);
     g.print();   
+    std::cout << car[0] << "\n" << car[1] << "\n" << car[2] << "\n" << car[3]<< std::endl;
+    std::cout << g.find("F-MAX") << std::endl;//1
+    std::cout << g.find("Ferrari") << std::endl;//-1
 }   
