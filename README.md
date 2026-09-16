@@ -44,5 +44,37 @@
     CPU(s):                                  14
     Model name:                              AMD Ryzen 7 5800U with Radeon Graphics
 
+## Ссылки на софт
+
+**AiDTA** (генерация последовательностей, MCTS)
+
+- Код: `https://github.com/Fudan-HQLab/AiDTA`
+- Препринт: `https://www.biorxiv.org/content/10.1101/2025.06.01.657174`
+
+**RNAstructure** (предсказание 2D: `Fold`, `ct2dot`, `MaxExpect`, `ProbKnot`)
+
+- `http://rna.urmc.rochester.edu/RNAstructure.html` — страница лаборатории Mathews, оттуда и бинарники, и исходники [1](https://doaj.org/article/d226b051263c4c74bd8581cbed44aae5) [5](https://link.springer.com/article/10.1186/1471-2105-11-129)
+- Статья: Reuter & Mathews, _BMC Bioinformatics_ 11:129 (2010), `https://doi.org/10.1186/1471-2105-11-129`
+- Лицензия GPL v2
+
+**3dRNA/DNA + NSP** (сборка 3D)
+
+- `http://biophy.hust.edu.cn/new/resources/3dRNA` — раздел ресурсов, там же локальная версия и NSP [3](https://www.sciencedirect.com/science/article/abs/pii/S0022283624003516)
+- Сервер: `http://biophy.hust.edu.cn/new/3dRNA`
+- Статья: Zhang, Xiong, Yang, Xiao. _J Mol Biol_ 436(17):168742 (2024), `https://doi.org/10.1016/j.jmb.2024.168742`
+- Метод 3dDNA: _Molecules_ 27(18):5936 (2022), `https://doi.org/10.3390/molecules27185936` [2](https://www.mdpi.com/1420-3049/27/18/5936)
+- Код и данные продублированы на Zenodo — ссылка в разделе Availability статьи [3](https://www.sciencedirect.com/science/article/abs/pii/S0022283624003516)
+
+**AmberTools** (tleap, sander/msander, ambpdb)
+
+- `https://ambermd.org/GetAmber.php` — AmberTools бесплатен, регистрация обязательна
+- Мануалы: `https://ambermd.org/Manuals.php`
+- У тебя **AmberClassic** — отдельная сборка, оттуда же
+
+**HDOCKlite** (докинг)
+
+- `http://hdock.phys.hust.edu.cn/` — веб-сервер
+- `http://huanglab.phys.hust.edu.cn/software/hdocklite/` — локальная версия, по запросу для академического использования
+- Справка по формуле confidence: `http://hdock.phys.hust.edu.cn/help.php`
 
 
