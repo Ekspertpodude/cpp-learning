@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 class Vehicle {
     protected:
         std:: string make ;
@@ -16,6 +17,9 @@ class Vehicle {
         virtual void print(){
             std::cout << make <<"\t" <<  model <<"\t" <<  year <<"\t" <<  price <<  std ::endl;
          }
+        void print_Info (){
+            std::cout << model << "\t" ;
+        }
 
 
 
@@ -67,12 +71,34 @@ class Truck: public virtual  Vehicle{
 };
 
 
+class Garage{
+    private: 
+        std::vector<Vehicle> vehicles;
+    public:
+        Garage() {};
+        void add(const Vehicle& vehicle){
+            vehicles.push_back(vehicle);
 
+        }
+        void print(){
+            std::cout <<  "Our garage: "<< "\t";
+            for (long long unsigned int i = 0; i < vehicles.size(); i++){
+                vehicles[i].print_Info() ;
+            }
+        }
+
+
+
+};
 
 
 
 
 int main(){
     Car car{"Toyota", "Camry", 2022, 2900000, 4, "Sedan"};
-    std::cout << car[0] << "\n" << car[1] << "\n" << car[2] << "\n" << car[3]<< std::endl;    
+    Truck truck{"Ford", "F-MAX", 2023, 6000000, "6162", "13t"};
+    auto g = Garage();
+    g.add(car);
+    g.add(truck);
+    g.print();   
 }   
