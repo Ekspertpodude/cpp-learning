@@ -59,7 +59,7 @@
 
 **3dRNA/DNA + NSP** (сборка 3D)
 
-- `http://biophy.hust.edu.cn/new/resources/3dRNA` — раздел ресурсов, там же локальная версия и NSP [3](https://www.sciencedirect.com/science/article/abs/pii/S0022283624003516)
+- `http://biophy.hust.edu.cn/new/resources/3dRNA` — раздел ресурсов,  локальная версия и NSP [3](https://www.sciencedirect.com/science/article/abs/pii/S0022283624003516)
 - Сервер: `http://biophy.hust.edu.cn/new/3dRNA`
 - Статья: Zhang, Xiong, Yang, Xiao. _J Mol Biol_ 436(17):168742 (2024), `https://doi.org/10.1016/j.jmb.2024.168742`
 - Метод 3dDNA: _Molecules_ 27(18):5936 (2022), `https://doi.org/10.3390/molecules27185936` [2](https://www.mdpi.com/1420-3049/27/18/5936)
@@ -69,7 +69,7 @@
 
 - `https://ambermd.org/GetAmber.php` — AmberTools бесплатен, регистрация обязательна
 - Мануалы: `https://ambermd.org/Manuals.php`
-- У тебя **AmberClassic** — отдельная сборка, оттуда же
+- **AmberClassic** —
 
 **HDOCKlite** (докинг)
 
