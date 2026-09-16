@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <deque>
+#include <type_traits> 
 class Vehicle {
     protected:
         std:: string make ;
@@ -72,7 +74,7 @@ class Truck: public virtual  Vehicle{
 
 class Garage{
     private: 
-        std::vector<Vehicle> vehicles;
+        std::deque<Vehicle> vehicles;
     public:
         Garage() {};
         void add(const Vehicle& vehicle){
@@ -87,21 +89,21 @@ class Garage{
         }
         template <typename T> int find (T name ){
             for (long long unsigned int i = 0 ; i < vehicles.size();i++){
-                for (long long unsigned int j = 0; j < 4; j++){
-                    if (j < 2){
-                        if (vehicles[i][j] == name ){
+                for (long long unsigned int j = 0; j < 6; j++){
+                   if constexpr ( std::is_arithmetic_v<T>){
+                        if (vehicles[i][j] == std::to_string(name) ){
                         return i ;}
-                    }
+                   }
                     else {
-                        name = std::to_string(name);
-                        if (vehicles[i][j] == name ){
+                        if  (vehicles[i][j] == name ){
                         return i ;}
-                        }
                     }
             }
-            return -1;
+           
         }
-  //template не работает. Чертовы проблемы с типами. Задание 8 как никак.    
+        return -1;
+        }
+ 
         
 };
 
@@ -113,7 +115,10 @@ int main(){
     g.add(truck);
     g.print();   
     std::cout << car[0] << "\n" << car[1] << "\n" << car[2] << "\n" << car[3]<< std::endl;
-    std::cout << g.find("F-MAX") << std::endl;//1
+    std::cout << g.find("F-MAX") << std::endl;// 1
     std::cout << g.find("Ferrari") << std::endl;//-1
+    std::cout << g.find(2023) << std::endl;//1
+    std::cout << g.find(2024) << std::endl;//-1
+
     return 0;
     }
