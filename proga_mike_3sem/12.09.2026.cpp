@@ -87,13 +87,22 @@ class Garage{
         }
         template <typename T> int find (T name ){
             for (long long unsigned int i = 0 ; i < vehicles.size();i++){
-                    if (vehicles[i][1] == name ){
-                    return i ;}
-                
-               
+                for (long long unsigned int j = 0; j < 4; j++){
+                    if (j < 2){
+                        if (vehicles[i][j] == name ){
+                        return i ;}
+                    }
+                    else {
+                        name = std::to_string(name);
+                        if (vehicles[i][j] == name ){
+                        return i ;}
+                        }
+                    }
+            }
+            return -1;
         }
-        return -1;
-    }
+  //template не работает. Чертовы проблемы с типами. Задание 8 как никак.    
+        
 };
 
 int main(){
