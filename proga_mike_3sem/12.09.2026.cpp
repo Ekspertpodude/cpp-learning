@@ -85,16 +85,15 @@ class Garage{
                 vehicles[i].print_Info() ;
             }
         }
-        int find(std::string name){
+        template <typename T> int find (T name ){
             for (long long unsigned int i = 0 ; i < vehicles.size();i++){
-                if (vehicles[i][1] == name){
-                    
-                    return i ;
-                }
+                    if (vehicles[i][1] == name ){
+                    return i ;}
                 
-                }
-                return -1;
-            }
+               
+        }
+        return -1;
+    }
 };
 
 int main(){
@@ -107,4 +106,5 @@ int main(){
     std::cout << car[0] << "\n" << car[1] << "\n" << car[2] << "\n" << car[3]<< std::endl;
     std::cout << g.find("F-MAX") << std::endl;//1
     std::cout << g.find("Ferrari") << std::endl;//-1
-}   
+    return 0;
+    }
