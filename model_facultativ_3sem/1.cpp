@@ -33,7 +33,7 @@ if (argc < 2){
     std::cout << "Incorrect input; Please write  number n" << std::endl;
 }
 int n = 0;
-out.open("Hello_text.txt");
+out.open("Hello_text.bin ", std::ios::binary);
 n  = std::stoi(argv[1]);
 std::vector <double> arr;
 if (out.is_open()){ 
@@ -44,10 +44,10 @@ for (double i = 1.0; i <= n; i++){
     int number = fibonachi (i);
     arr.push_back(1.0 / i);
     std::cout << std::scientific << arr[i-1] << "\t" ;
-out <<' ' <<i <<  "\t"<< number << std::endl;
 
  }
  }
+ out.write(reinterpret_cast<const char*>(arr.data()), arr.size() * sizeof(double));
     out.close();
     std::cout << "File has been created";
 }
