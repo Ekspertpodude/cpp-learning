@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <array>
+#include <vector>
 
 int fibonachi ( double index){
     if (index < 2){
@@ -35,14 +35,14 @@ if (argc < 2){
 int n = 0;
 out.open("Hello_text.txt");
 n  = std::stoi(argv[1]);
-std::array <double  , 10000 > arr  ={0};
+std::vector <double> arr;
 if (out.is_open()){ 
 
 std:: cout << "Hello, World!" << std::endl;
 
 for (double i = 1.0; i <= n; i++){
     int number = fibonachi (i);
-    arr [i - 1] = 1.0 / i ;
+    arr.push_back(1.0 / i);
     std::cout << std::scientific << arr[i-1] << "\t" ;
 out <<' ' <<i <<  "\t"<< number << std::endl;
 
