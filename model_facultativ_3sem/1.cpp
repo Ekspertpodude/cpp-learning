@@ -2,7 +2,7 @@
 #include <fstream>
 #include <array>
 
-int fibonachi ( int index){
+int fibonachi ( double index){
     if (index < 2){
         return 1;
     }
@@ -35,15 +35,15 @@ if (argc < 2){
 int n = 0;
 out.open("Hello_text.txt");
 n  = std::stoi(argv[1]);
-std::array <int  , 10000 > arr  ={0};
+std::array <double  , 10000 > arr  ={0};
 if (out.is_open()){ 
 
 std:: cout << "Hello, World!" << std::endl;
 
-for (int i = 1; i <= n; i++){
+for (double i = 1.0; i <= n; i++){
     int number = fibonachi (i);
-    arr [i - 1] = number ;
-    std::cout << arr[i-1] << "\t" ;
+    arr [i - 1] = 1.0 / i ;
+    std::cout << std::scientific << arr[i-1] << "\t" ;
 out <<' ' <<i <<  "\t"<< number << std::endl;
 
  }
