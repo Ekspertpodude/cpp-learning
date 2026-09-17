@@ -1,7 +1,29 @@
 #include <iostream>
 #include <fstream>
 
-  
+int fibonachi ( int index){
+    if (index < 2){
+        return 1;
+    }
+    else{
+        int i = 0;
+        int num_b = 1;
+        int num_e = 1;
+        int num_next = 2;
+        while (i < index - 2 ){
+            int num_next = num_b + num_e;
+            num_b  = num_e;
+            num_e = num_next;
+            i++;
+        }
+        return num_e;
+
+    }
+   
+    
+    
+
+}
 
 int main( int argc, char *argv[]){
 
@@ -18,7 +40,7 @@ std:: cout << "Hello, World!" << std::endl;
 
 for (int i = 1; i <= n; i++){
 
-out <<' ' <<i;
+out <<' ' <<i <<  "\t"<< fibonachi (i) << std::endl;
 
  }
  }
