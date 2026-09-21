@@ -25,13 +25,10 @@ double partial_sums (int  n){
     }
     return sum;
 }
-
-void printbits_double (double v){
-
-double partial_sums_garm(double n){
-    double sum = 1.0;
-    for (int i = 1; i < n : i++ ){
-        sum = sum + 1/n;
+float partial_sums_garm(int n){
+    float sum = 1.0;
+    for (float  i = 1; i < n ; i++ ){
+        sum = sum + 1/i;
 
     }
     return sum;
@@ -40,11 +37,36 @@ double partial_sums_garm(double n){
 }
 
 
+void printbits_float (float v){
+
+
+
+
+int i;
+ int  *j = (int  *) &v;
+ int n = 8 * sizeof (v);
+
+ for ( int i = n - 1; i >= 0; i--)
+ {
+
+ putchar (' ');
+ putchar ('0' + (((*j) >> i) & 1));
+ if (i % 8 == 0) {
+            putchar (' ');
+        }
+
+ }
+}
+void printbits_double (double v){
+
+
+
+
 int i;
  unsigned long long  *j = (unsigned long long  *) &v;
  int n = 8 * sizeof (v);
 
- for (i = n - 1; i >= 0; i--)
+ for ( int i = n - 1; i >= 0; i--)
  {
 
  putchar (' ');
@@ -56,11 +78,11 @@ int i;
  }
 }
 int main(){
-    for (int i = 1; i < 200;i++){
+    for ( int i = 1; i < 2000000;i = i + 100000){
         std::cout << std::endl;
          std::cout << i << std::endl;
          std::cout << "--------------------------------------------------------" << std::endl;
-        printbits_double (partial_sums(i));
+        printbits_float (partial_sums_garm(i));
         
        
         
