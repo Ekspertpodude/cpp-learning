@@ -31,12 +31,22 @@ void read_students(){
       line.erase(0, line.find(delimiter) + delimiter.length());
       tmp_student.name = line;
       tmp_student.age = age;
-      cout << "Age: " << tmp_student.age <<  " Name: " << tmp_student.name << endl;
       students.push_back(tmp_student);
+      Student* address = &tmp_student;
+      p_students.push_back(address);
     }
     file.close();
   }
+
+
+
 }
+  void print_students (){
+    
+    for (Student student : students){
+      cout << "Age: " << student.age <<  " Name: " << student.name << endl ;
+    }
+  }
 
 bool less_age(const Student& left, const Student& right) {
   return left.age < right.age;
@@ -45,10 +55,9 @@ bool less_age(const Student& left, const Student& right) {
 int main() {
   read_students();
   //print_students();
-
-  //cout << students[1].name << endl;
-  //sort(students.begin(), students.end(), less_age);
-  //print_students();
+  cout << students[1].name << endl;
+  sort(students.begin(), students.end(), less_age);
+  print_students();
   //cout << (*p_students[0]).name << endl;
   //cout << p_students[0]->name << endl;
   
