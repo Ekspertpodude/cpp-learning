@@ -60,18 +60,46 @@ void create_adresses(){
 bool less_age(const Student& left, const Student& right) {
   return left.age < right.age;
 }
+Student search_age (int age){
+  sort(students.begin(), students.end(), less_age);
+  int high = students.size() -1 ;
+  int low = 0;
+  while (low <= high){
+    int mid  = (low + high )/2;
+    if (students[mid].age == age){
+    Student student = students[mid];
+    cout <<"id: " << student.id<< "  Age: " << student.age <<  " Name: " << student.name << endl ;
+    return students[mid];
+    }
+    if (students[mid].age > age){
+      high = mid -1;
+    }
+    if (students[mid].age < age){
+      low = mid + 1;
+    }
+  }
+  cout << "There are no students with this age" << endl;
+  Student none =  {-1, "none" , -1} ;
+  return none ;
+}
+
+
+
+
 
 int main() {
   read_students();
   create_adresses();
   //print_students();
-  cout << students[1].name << endl;
+  //cout << students[1].name << endl;
   
-  cout << (*p_students[1]).name << endl;
-  cout << p_students[1]->name << endl;
-  sort(students.begin(), students.end(), less_age);
-  print_students();
-  cout << (*p_students[1]).name << endl;
-  cout << p_students[1]->name << endl;
+  //cout << (*p_students[1]).name << endl;
+  //cout << p_students[1]->name << endl;
+  //sort(students.begin(), students.end(), less_age);
+  //print_students();
+  //cout << (*p_students[1]).name << endl;
+  //cout << p_students[1]->name << endl;
+  search_age(find_age);
+
   
 }
