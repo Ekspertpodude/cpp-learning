@@ -11,6 +11,15 @@ struct Student {
   int id;
   string name;
   int age;
+  Student* left;
+  Student* right;
+  Student (int id , string name1 , int age , Student* left = nullptr , Student* right = nullptr){
+    this->id = id;
+    this->age = age;
+    this->name = name1;
+    this->left = left;
+    this->right = right;
+  }
   
 };
 
@@ -28,7 +37,7 @@ void read_students(){
     string line;
     int id = 0;
     while (getline(file, line)) {
-      Student tmp_student;
+      Student tmp_student {-1, "none" , -1};
       string age_str = line.substr(0, line.find(delimiter)); 
       int age = stoi(age_str);
       line.erase(0, line.find(delimiter) + delimiter.length());
@@ -82,7 +91,15 @@ Student search_age (int age){
   Student none =  {-1, "none" , -1} ;
   return none ;
 }
-
+Student* make_binare_tree(int low = 0 , int high = students.size() - 1 ){
+  if (low > high) {
+        return nullptr;
+    }
+  int root = (low + high ) /2 ;
+  students[root].left = make_binare_tree(low, root - 1);
+  students[root].right = make_binare_tree(root + 1, high);
+  return &students[root];
+}
 
 
 
@@ -90,7 +107,8 @@ Student search_age (int age){
 int main() {
   read_students();
   create_adresses();
-  //print_students();
+  sort(students.begin(), students.end(), less_age);
+  print_students();
   //cout << students[1].name << endl;
   
   //cout << (*p_students[1]).name << endl;
@@ -99,7 +117,22 @@ int main() {
   //print_students();
   //cout << (*p_students[1]).name << endl;
   //cout << p_students[1]->name << endl;
-  search_age(find_age);
+  //search_age(find_age);
+  Student* root = make_binare_tree();
+  
+  cout << "Main Root: " << root->name << '\t' << root->age << endl;
+  if (root->left != nullptr) {
+    cout << "Left leave:  " << root->left->name << endl;
+    
+    // Внук корня (левый ребенок левого ребенка):
+    if (root->left->left != nullptr) {
+        cout << "Left-Left leave :  " << root->left->left->name << endl;
+    }
+}
+  cout << students[2].left->name << '\t' << students[2].left->age << endl;
+  cout << students[2].right->name << '\t' << students[2].right->age << endl;
+
+
 
   
 }
