@@ -3,10 +3,9 @@ import random
 
 def scramble_sequence(seq):
     arr = []
-    for i in range(len(seq)):
-        arr.append(seq[i])
-    seq_new = "".join(random.shuffle(arr))
-    return seq_new
+    arr = list(seq)
+    random.shuffle(arr)
+    return "".join(arr)
 def calculate_identity(seq1, seq2):
     matches = 0
     if (len(seq1) != len(seq2)):
@@ -22,6 +21,6 @@ def generate_scrambled_pool(aptamer_seq, n_samples=1000, max_identity=80.0):
         decoi = scramble_sequence(aptamer_seq)
         if (calculate_identity(aptamer_seq,decoi)  < max_identity):
             decoi_set.add(decoi)
-
+    return decoi_set
 
 
