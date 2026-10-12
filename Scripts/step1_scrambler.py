@@ -1,3 +1,20 @@
+#!/usr/bin/env python3
+# step1_scrambler_repair.py — пакет негативного контроля (scramble-декои), 3D-маршрут:
+#   nsp assemble (чистый 3D_DNA, ~30 c) -> repair_one() из repair_ss.py
+#   (одна цепь 1..L, tleap-мостики OL15, минимизация 2000/1000,
+#    приёмка КАЖДОЙ задачи: заряд == -(L-1), стыки O3'..O5' <= 3.05 A)
+# Отличия от исходного step1_scrambler.py (все помечены "# ИЗМЕНЕНО"):
+#   1) сборка через assemble + repair_one вместо тяжёлого run_ss.sh
+#      (приёмка по стыкам — у run_ss.sh её не было, разрывы хребта проходили мимо);
+#   2) parser_ct всегда возвращает 3 значения (убегает от ValueError при пустом .ct);
+#   3) prepare_3d_tasks пропускает пустые декои (раньше в fasta улетала строка "None");
+#   4) main пишет apt_tasks.csv (id,seq,ss,L) — мост к dock_apt.py;
+#   5) MAX_WORKERS=12 при nproc=14.
+# Вход:  ~/Scripts/test_scrambling.csv (id,apt_seq,length,decoy_1..3) — ОЧИЩЕННЫЙ!
+# Выход: ~/3D_DNA/apt_3d_models/<name>/… + apt_tasks.csv + apt3d_results.csv
+# Запуск:  conda activate aidta            (Fold/DATAPATH нужны для 2D)
+#          python3 step1_scrambler_repair.py 4     # дым: 1 аптамер + 3 его декоя
+#          python3 step1_scrambler_repair.py       # вся партия
 import random
 import subprocess
 import tempfile
@@ -10,6 +27,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import sys
 import time
 import re
+
+# ИЗМЕНЕНО (1): ремонтная приёмка из проверенного repair_ss.py — не копипастим,
+# а импортируем, чтобы правила приёмки жили в одном месте.
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+from repair_ss import repair_one  # noqa: E402
 
 
 def scramble_sequence(seq):
@@ -38,20 +61,27 @@ def generate_scrambled_pool(aptamer_seq, n_samples=1000, max_identity=80.0 , See
 
 
 
-
 def parser_ct (path):
     ss_chars = []
     if not os.path.exists(path) or os.path.getsize(path) == 0:
-        return 0.0, 0 , ''
+        return 0.0, 0, ""  # ИЗМЕНЕНО (2): всегда 3 значения — распаковка ниже не падает
     index_energy = None
-    with open(path ) as f:
+    with open(path) as f:
         lines = f.readlines()
         heading = lines[0].split()
         num_of_dots = 0
         for i in range(len(heading)):
             if (heading[i] == '='):
                 index_energy = i + 1
+        # ИЗМЕНЕНО (6): .ct от Fold содержит НЕСКОЛЬКО структур подряд
+        # (МФЕ + субоптимальные в энергетическом окне). Читаем ТОЛЬКО первый
+        # блок из n_lin строк, иначе ss склеивается в k*L и assemble падает
+        # с "length of the sequence should equal to the length of the SS".
+        n_lin = int(heading[0])
+        parsed = 0
         for line in lines[1:]:
+            if parsed >= n_lin:
+                break
             part = line.split()
             if len(part) >= 5:
                 try:
@@ -61,7 +91,6 @@ def parser_ct (path):
                 except ValueError:
                     # Если там текст (например, слово 'seq'), просто пропускаем строку!
                     continue
-
 
                 if pair_idx == 0:
 
@@ -73,7 +102,7 @@ def parser_ct (path):
                 else:
 
                     ss_chars.append(')')
-
+                parsed += 1
 
         ss_string = "".join(ss_chars)
 
@@ -96,7 +125,8 @@ def run_rnastructure (seq):
                            text=True,
                            timeout=5)
         except subprocess.TimeoutExpired:
-            pass
+            pass    # НБ: при таймауте .ct нет -> вернётся (0.0, 0, "") — без падения,
+                    # но ss будет пустой; для 2D-задач это отловится пустой ss.
         energy, dots, ss_string = parser_ct(ct_file)
     return energy, dots , ss_string
 
@@ -125,7 +155,6 @@ def similarity_with_aptamers (seq1 , apt_list):
             return False
 
     return True
-
 
 
 def make_decoi_list (apt_seq , apt_list, Attempt = 1, base_seed=12345):
@@ -208,8 +237,17 @@ def prepare_3d_tasks(input_csv_path):
         decoi_3 = row["decoy_3"]
         molecula = [(id , apt_name) , (id + '_dec1',decoi_1) , (id + '_dec2',decoi_2) , (id + '_dec3',decoi_3)]
         for dna in molecula:
+            # ИЗМЕНЕНО (3): пустая/отсутствующая последовательность пропускается,
+            # а не превращается в fasta со строкой "None"
+            if not isinstance(dna[1], str) or not dna[1]:
+                print(f"⚠️ {dna[0]}: пустая последовательность — задача пропущена")
+                continue
             struct = run_rnastructure(dna[1])
             ss =struct[2]
+            if not ss:
+                # ИЗМЕНЕНО (3): пустая ss (таймаут Fold) — не создаём битую задачу
+                print(f"⚠️ {dna[0]}: Fold вернул пустую ss — задача пропущена")
+                continue
             tasks.append((dna[0] , dna[1] , ss , length))
     return tasks
 
@@ -217,10 +255,13 @@ def prepare_3d_tasks(input_csv_path):
 OUT_ROOT = os.path.expanduser("~/3D_DNA/apt_3d_models")
 INPUT_CSV = os.path.expanduser("~/Scripts/test_scrambling.csv")
 RESULTS_CSV = os.path.join(OUT_ROOT, "apt3d_results.csv")
-RUN_SH = "/home/ekspert/3D_DNA/run_3dRNA_DNA/test_run_3dRNA/3dRNA/run_ss.sh"
+# ИЗМЕНЕНО (4): мост к dock_apt.py — он ждёт задачи именно в таком файле
+TASKS_CSV = os.path.join(OUT_ROOT, "apt_tasks.csv")
+# ИЗМЕНЕНО (1): вместо RUN_SH (run_ss.sh) — прямой вызов чистого assemble
+NSP_BIN = "/home/ekspert/3D_DNA/home/yiduo/3dRNA/NSP/cirRNA_and_DNA/nsp"
 
-MAX_WORKERS = 14  # Использовать 12 ядер CPU
-TIMEOUT = 1800  # Таймаут 30 минут на 1 структуру (убивает висячие процессы)
+MAX_WORKERS = 12  # ИЗМЕНЕНО (5): nproc=14 → 12 в счёт, 2 системе/Fold
+TIMEOUT_ASS = 1800  # Потолок на assemble (норма ~30 c), от зависших процессов
 
 JOB_PAR = """_jobid {name}
 _version 2.0.0
@@ -237,24 +278,26 @@ _rna_type linear
 _routine Default
 """
 
+# ИЗМЕНЕНО (1): тело сборки — боевой быстрый маршрут, сигнатура результата прежняя
 def build_apt(task):
     name, seq, ss, L = task
     workdir = os.path.join(OUT_ROOT, name)
     os.makedirs(workdir, exist_ok=True)
 
-    # Записываем конфиг job.par
+    # Записываем конфиг job.par (шаблон с обязательной пустой строкой в конце)
     with open(os.path.join(workdir, "job.par"), "w") as f:
         f.write(JOB_PAR.format(name=name, seq=seq, ss=ss))
 
-    cmd = f"source ~/nsp_env.sh && bash {RUN_SH} job.par > {name}.run.log 2>&1"
     t0 = time.time()
-
+    # Шаг 1: чистый assemble 3D_DNA.
+    # start_new_session=True: при таймауте убивается вся группа процессов.
     try:
-        # start_new_session=True убивает весь дерево процессов при таймауте
         p = subprocess.run(
-            ["bash", "-c", cmd],
+            ["bash", "-c",
+             f"source ~/nsp_env.sh && {NSP_BIN} assemble -par job.par "
+             f'-ss "{ss}" -t DNA > {name}.assemble.log 2>&1'],
             cwd=workdir,
-            timeout=TIMEOUT,
+            timeout=TIMEOUT_ASS,
             start_new_session=True,
         )
     except subprocess.TimeoutExpired:
@@ -265,71 +308,35 @@ def build_apt(task):
         return {
             "name": name,
             "ok": False,
-            "reason": f"timeout(>{TIMEOUT}s)",
-            "seconds": TIMEOUT,
+            "reason": f"timeout assemble (>{TIMEOUT_ASS}s)",
+            "seconds": TIMEOUT_ASS,
         }
-
-    sec = round(time.time() - t0, 1)
-    min_pdb = os.path.join(workdir, f"{name}.pred1.min.pdb")
-
-    if not os.path.exists(min_pdb):
+    if p.returncode != 0:
         return {
             "name": name,
             "ok": False,
-            "reason": "no min.pdb",
+            "reason": f"assemble rc={p.returncode} (см. {name}.assemble.log)",
             "ret": p.returncode,
-            "seconds": sec,
         }
-
-    # Проверка количества атомов
-    with open(min_pdb) as f:
-        atoms = sum(1 for l in f if l.startswith("ATOM"))
-
-    if atoms < 50:
+    pred = os.path.join(workdir, f"{name}.pred1.pdb")
+    if not os.path.exists(pred):
         return {
             "name": name,
             "ok": False,
-            "reason": f"мало атомов: {atoms}",
+            "reason": "assemble без pred1.pdb",
             "ret": p.returncode,
-            "seconds": sec,
         }
+    ass_sec = time.time() - t0
 
-    # Проверка заряда в leap.log
-    charge = None
-    leap_log = os.path.join(workdir, f"{name}.pred1", "leap.log")
-    if os.path.exists(leap_log):
-        with open(leap_log, errors="replace") as f:
-            for line in f:
-                m = re.search(
-                    r"unperturbed charge of the unit \((-?\d+\.?\d*)\)", line
-                ) or re.search(r"[Uu]nperturbed charge[:\s]+(-?\d+\.?\d*)", line)
-                if m:
-                    charge = float(m.group(1))
+    # Шаг 2: ремонт хребта + минимизация 2000/1000 + приёмка
+    # (заряд == -(L-1) И стыки O3'..O5' <= 3.05 A) — всё внутри repair_one.
+    r = repair_one(name, seq, pred, workdir)
+    r["seconds"] = round(r.get("seconds", 0) + ass_sec, 1)
+    r["ret"] = p.returncode
+    if not r.get("ok"):
+        r["min_pdb"] = ""
+    return r
 
-    expected = -(L - 1)  # Одиночная цепь ДНК: -(L-1)
-    ok = charge is not None and abs(charge - expected) < 1e-6
-
-    # 🧹 ОЧИСТКА МУСОРА: Удаляем тяжелый 50 МБ файл траектории после успеха
-    if ok:
-        traj = os.path.join(workdir, f"{name}.traj.p1.pdb")
-        try:
-            if os.path.exists(traj):
-                os.remove(traj)
-        except OSError:
-            pass
-
-    return {
-        "name": name,
-        "ok": ok,
-        "L": L,
-        "atoms": atoms,
-        "charge": charge,
-        "expected": expected,
-        "ret": p.returncode,
-        "seconds": sec,
-        "min_pdb": min_pdb if ok else "",
-        "reason": "" if ok else f"заряд {charge} != {expected}",
-    }
 def worker(task):
     try:
         return build_apt(task)
@@ -344,6 +351,13 @@ def main():
 
     # 1. Формируем список всех 3D-задач
     tasks = prepare_3d_tasks(INPUT_CSV)
+
+    # ИЗМЕНЕНО (4): дублируем задачи в apt_tasks.csv (id,seq,ss,L) —
+    # именно в таком виде их потом подхватит dock_apt.py
+    with open(TASKS_CSV, "w", newline="") as tf:
+        w = csv.writer(tf)
+        w.writerow(["id", "seq", "ss", "L"])
+        w.writerows(tasks)
 
     # Опциональный лимит для быстрой калибровки/теста
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else None
@@ -370,7 +384,7 @@ def main():
         not os.path.exists(RESULTS_CSV) or os.path.getsize(RESULTS_CSV) == 0
     )
 
-    # 3. МНОГОПОТОЧНЫЙ ЗАПУСК СБОРОК (12 рабочих)
+    # 3. МНОГОПОТОЧНЫЙ ЗАПУСК СБОРОК
     with open(RESULTS_CSV, "a", newline="") as out:
         w = csv.writer(out)
         if new_file:
