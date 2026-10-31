@@ -18,5 +18,7 @@ for idx , row in X_test.iterrows():
     delta = X_train - row
     delta_square = delta.pow(2)
     delta_sum = delta_square.sum(axis = 1 , numeric_only = True)
-    print(delta_sum)
+    sort_delta  = delta_sum.sort_values (ascending = True)
+    sort_delta_5 = sort_delta.iloc[:5]
+    print(sort_delta_5)
 
