@@ -20,5 +20,8 @@ for idx , row in X_test.iterrows():
     delta_sum = delta_square.sum(axis = 1 , numeric_only = True)
     sort_delta  = delta_sum.sort_values (ascending = True)
     sort_delta_5 = sort_delta.iloc[:5]
-    print(sort_delta_5)
+    indx = sort_delta_5.index
+    val_y = y_train.loc[indx]
+    print(indx)
+    print(val_yё)
 
