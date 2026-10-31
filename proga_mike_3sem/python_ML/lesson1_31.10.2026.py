@@ -7,7 +7,12 @@ df['target'] = iris.target
 df.head()
 df = df.sample(frac=1).reset_index(drop=True)
 size = df.shape
-lines_num = size[1]
-X_train = df.iloc[0: (lines_num //8) * 10 ]
-X_test = df.iloc[(lines_num //8) * 10:]
+lines_num = size[0]
+X_train = df.iloc[0:int(lines_num * 0.8) ].drop(columns = ['target'])
+X_test = df.iloc[int(lines_num * 0.8) :].drop(columns = ['target'])
+y_test = df.iloc[int(lines_num * 0.8) : , -1]
+y_train = df.iloc[0:int(lines_num * 0.8)  , -1]
+print(lines_num)
 print(df)
+print(y_train)
+print (X_train)
