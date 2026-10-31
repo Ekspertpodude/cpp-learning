@@ -15,13 +15,8 @@ y_test = df.iloc[int(lines_num * 0.8) : , -1]
 y_train = df.iloc[0:int(lines_num * 0.8)  , -1]
 
 for idx , row in X_test.iterrows():
-    print(row)
     delta = X_train - row
+    delta_square = delta.pow(2)
+    delta_sum = delta_square.sum(axis = 1 , numeric_only = True)
+    print(delta_sum)
 
-
-
-
-print(lines_num)
-print(df)
-print(y_train)
-print (X_train)
