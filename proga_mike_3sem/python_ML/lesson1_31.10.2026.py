@@ -1,4 +1,5 @@
 import pandas as pd 
+import numpy as np
 from sklearn import datasets
 iris = datasets.load_iris()
 
@@ -12,6 +13,14 @@ X_train = df.iloc[0:int(lines_num * 0.8) ].drop(columns = ['target'])
 X_test = df.iloc[int(lines_num * 0.8) :].drop(columns = ['target'])
 y_test = df.iloc[int(lines_num * 0.8) : , -1]
 y_train = df.iloc[0:int(lines_num * 0.8)  , -1]
+
+for idx , row in X_test.iterrows():
+    print(row)
+    delta = X_train - row
+
+
+
+
 print(lines_num)
 print(df)
 print(y_train)
