@@ -22,6 +22,7 @@ for idx , row in X_test.iterrows():
     sort_delta_5 = sort_delta.iloc[:5]
     indx = sort_delta_5.index
     val_y = y_train.loc[indx]
-    print(indx)
-    print(val_yё)
+    moda = pd.Series.mode(val_y)
+    print(val_y)
+    print (moda)
 
