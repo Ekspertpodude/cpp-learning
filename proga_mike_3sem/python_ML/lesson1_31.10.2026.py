@@ -1,7 +1,7 @@
 import pandas as pd 
 import numpy as np
 from sklearn import datasets
-
+import matplotlib.pyplot as plt
 
 
 
@@ -53,20 +53,30 @@ acc_train, y_pred_train = neigbors(X_train, X_train, y_pred_train, y_train, y_tr
 print (acc1 , y_pred1)
 print(acc2 , y_pred2)
 print(acc_train , y_pred_train)
-max_neigbour = 25
+max_neigbour = 120
 acc_test_list = []
 acc_train_list = []
 for k in range(max_neigbour):
-    accuracy1 , y_pred_0 = neigbors(X_test ,X_train, y_pred , y_train , y_test ,  k+1)
+    if k+1 <= 30:
+        accuracy1 , y_pred_0 = neigbors(X_test ,X_train, y_pred , y_train , y_test ,  k+1)
     accuracy2 , y_pred_0_1 = neigbors( X_train, X_train, y_pred_train, y_train, y_train, k+1)
     acc_test_list.append(accuracy1)
     acc_train_list.append(accuracy2)
 
 acc_test_list = np.array(acc_test_list)
 acc_train_list = np.array(acc_train_list)
+
 print ("TEST: ",acc_test_list)
 print  ("Train: ",acc_train_list)
 
+k_values = range(1, max_neigbour + 1)
+plt.errorbar(k_values, acc_test_list, label='Test ' ,marker = 's' )
+plt.errorbar(k_values, acc_train_list, label='Train ' , marker = '^')
+plt.xlabel('Num of neigbours (k)')
+plt.ylabel('Accuracy (%)')
+plt.legend() 
+plt.grid()   
+plt.show()
 
 
 
