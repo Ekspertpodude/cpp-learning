@@ -8,6 +8,8 @@ df['target'] = iris.target
 df.head()
 df = df.sample(frac=1).reset_index(drop=True)
 size = df.shape
+total_accuracy = 0
+print(size)
 lines_num = size[0]
 X_train = df.iloc[0:int(lines_num * 0.8) ].drop(columns = ['target'])
 X_test = df.iloc[int(lines_num * 0.8) :].drop(columns = ['target'])
@@ -25,6 +27,12 @@ for idx , row in X_test.iterrows():
     val_y = y_train.loc[indx]
     moda = pd.Series.mode(val_y)
     y_pred.loc[idx] = moda.iloc[0]
+    if y_pred.loc[idx] == y_test.loc[idx]:
+        total_accuracy+= 1 / (y_test.shape[0]) * 100
+    
+print(total_accuracy)
+
+
 
 print(y_pred)
 
