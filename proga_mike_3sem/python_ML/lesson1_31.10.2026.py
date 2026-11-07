@@ -12,6 +12,7 @@ lines_num = size[0]
 X_train = df.iloc[0:int(lines_num * 0.8) ].drop(columns = ['target'])
 X_test = df.iloc[int(lines_num * 0.8) :].drop(columns = ['target'])
 y_test = df.iloc[int(lines_num * 0.8) : , -1]
+y_pred = pd.Series.copy(y_test, deep= True)
 y_train = df.iloc[0:int(lines_num * 0.8)  , -1]
 
 for idx , row in X_test.iterrows():
@@ -23,6 +24,8 @@ for idx , row in X_test.iterrows():
     indx = sort_delta_5.index
     val_y = y_train.loc[indx]
     moda = pd.Series.mode(val_y)
+    
     print(val_y)
     print (moda)
+
 
