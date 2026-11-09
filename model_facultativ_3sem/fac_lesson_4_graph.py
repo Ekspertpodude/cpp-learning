@@ -29,7 +29,7 @@ compile_command = ["g++", cpp_file, "-o", executable]
 compile_result = subprocess.run(compile_command, capture_output=True, text=True)
 
     #step , x_0,v_0,T , w
-args = ["0.01", "1", "0", "10", "100"]
+args = ["0.01", "1", "0", "25", "100"]
 run_result = subprocess.run([executable]  + args , capture_output=True, text=True)
 
 with  open ("Data_oscilator_Eiler", "r") as data:
@@ -63,6 +63,7 @@ ln_ampl_x_h = np.log(ampl_x_h)
 ln_ampl_v_eyl = np.log(ampl_v_eyl)
 ln_ampl_v_h = np.log(ampl_v_h)
 ln_t = np.log (t_x[1:] )
+'''
 fig, ax = plt.subplots(nrows=2, ncols=6, figsize=(10, 10))
 ax[0][0].plot (t_x , x_x ,label = 'X(t) - Method Eiler')  
 ax[0][0].set_title('X(t) - Method Eiler', fontsize=14, pad=10) # Заголовок
@@ -126,7 +127,7 @@ ax[1][5].set_ylabel('ln(A) , м/c', fontsize=11)
 
 
 plt.tight_layout() 
-plt.show()
+plt.show()'''
 
 fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(10, 10))
 
@@ -134,10 +135,6 @@ ax[0][0].plot ( x_x , v_x,label = 'Phas_diagram - Method Eiler',color = 'r')
 ax[0][0].set_title('Phas_diagram - Method Eiler', fontsize=14, pad=10 , color = 'r') # Заголовок
 ax[0][0].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
 ax[0][0].set_ylabel('v , м/c', fontsize=11)  
-ax[0][0].plot (x , v ,label = 'X(t)')  
-ax[0][0].set_title('Phas_diagram - Method Hoina ', fontsize=14, pad=10) # Заголовок
-ax[0][0].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
-ax[0][0].set_ylabel('v , м/c', fontsize=11)
 
 
 ax[0][1].plot (t , x ,label = 'X(t) - Method Xoina')  
@@ -158,6 +155,33 @@ ax[1][2].set_title('v (t) -  - Method Runge Kutta', fontsize=14, pad=10) # За�
 ax[1][2].set_xlabel('t, c', fontsize=11)                 # Подпись оси X
 ax[1][2].set_ylabel('v , м/c', fontsize=11)
 
+
+
+fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(10, 10))
+
+ax[0][0].plot ( x_x , v_x,label = 'Phas_diagram - Method Eiler',color = 'r')  
+ax[0][0].set_title('Phas_diagram - Method Eiler', fontsize=14, pad=10 , color = 'r') # Заголовок
+ax[0][0].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
+ax[0][0].set_ylabel('v , м/c', fontsize=11)  
+ax[0][1].plot (x , v ,label = 'X(t)')  
+ax[0][1].set_title('Phas_diagram - Method Hoina ', fontsize=14, pad=10) # Заголовок
+ax[0][1].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
+ax[0][1].set_ylabel('v , м/c', fontsize=11)
+
+
+ax[0][0].plot ( x_x , v_x,label = 'Phas_diagram - Method Eiler',color = 'r')  
+ax[0][0].set_title('Phas_diagram - Method Eiler', fontsize=14, pad=10 , color = 'r') # Заголовок
+ax[0][0].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
+ax[0][0].set_ylabel('v , м/c', fontsize=11)  
+ax[0][1].plot (x , v ,label = 'X(t)')  
+ax[0][1].set_title('Phas_diagram - Method Hoina ', fontsize=14, pad=10) # Заголовок
+ax[0][1].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
+ax[0][1].set_ylabel('v , м/c', fontsize=11)
+
+ax[0][2].plot (x_rk , v_rk ,label = 'X(t)')  
+ax[0][2].set_title('Phas_diagram - Method Runge- Kuta ', fontsize=14, pad=10) # Заголовок
+ax[0][2].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
+ax[0][2].set_ylabel('v , м/c', fontsize=11)
 plt.tight_layout() 
 plt.show()
 

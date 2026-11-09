@@ -20,9 +20,12 @@ int main(int argc, char *argv[]) {
     double v_0_copy = v_0;
     double x_0_1 = x_0;
     double v_0_1 = v_0;
+    double x_copy = x_0;
+    double v_copy = v_0;
       std::ofstream out;
       std::ofstream out1;
       std::ofstream out2;
+      std::ofstream out3;
     out.open("Data_oscilator_Eiler");
     if (out.is_open()){ 
 
@@ -94,5 +97,24 @@ if (out2.is_open()){
 
 }
 out2.close();
+
+out3.open("Data  Backward Eiler ");
+    
+    out2 << "My  Initial data_METHOD Backward Eiler:" << std::endl;
+     out2 <<"STEP = " << step <<" X_ 0 = " << x_copy << " V_0 = " << v_copy << " W = " << w << " T =  " << T << std::endl;
+     out2 << "t"<< " Coordinates_x " << " Velocity " << std::endl ;
+     double x_b_ei = x_copy;
+     double v_b_ei = v_copy;
+    for(double t=0 ; t < T ; t = t+ step){
+        out3 << t <<'\t' << x_b_ei << '\t'<< v_b_ei<< std::endl ;
+        double v_1 = (v_b_ei - step * f(w , x_b_ei))/ (1 - step* step * w * w);
+        double x_1 = x_b_ei + step * v_1;
+        x_b_ei = x_1;
+        v_b_ei  = v_1;
+    }
+
+
+out3.close();
+
 return 0;
 }
