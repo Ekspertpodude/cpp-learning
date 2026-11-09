@@ -1,0 +1,13 @@
+{
+    "step" : 0.001,
+    "x_0" : 1.0,
+    "v_0": 0.0 ,
+    "T": 25.0 , 
+    "w": 10.0 ,
+    "output_files":{
+        "eiler" : "Data_oscilator_Eiler.txt",
+        "hoin" : "Data_oscilator_XOINA.txt",
+        "Rk" : "Data_Runge_Kuta.txt" ,
+        "Backward_Eiler" : "Data_Backward_Eiler.txt"
+    }
+}
