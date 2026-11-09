@@ -29,7 +29,7 @@ compile_command = ["g++", cpp_file, "-o", executable]
 compile_result = subprocess.run(compile_command, capture_output=True, text=True)
 
     #step , x_0,v_0,T , w
-args = ["0.01", "1", "0", "25", "100"]
+args = ["0.1", "1", "0", "25", "5"]
 run_result = subprocess.run([executable]  + args , capture_output=True, text=True)
 
 with  open ("Data_oscilator_Eiler", "r") as data:
@@ -42,6 +42,9 @@ with  open ("Data_oscilator_XOINA", "r") as data:
 with  open ("Data_Rynge_Kuta", "r") as data:
         lines = data.readlines()[3:]    
         t_rk, x_rk, v_rk = np.loadtxt(lines, unpack=True) 
+with open ("Data_Backward_Eiler") as data:
+       lines = data.readlines()[3:]
+       t_b_ei , x_b_ei , v_b_ei = np.loadtxt(lines, unpack=True) 
         
 ampl = []
 ampl_h = []
@@ -168,20 +171,27 @@ ax[0][1].set_title('Phas_diagram - Method Hoina ', fontsize=14, pad=10) # Заг
 ax[0][1].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
 ax[0][1].set_ylabel('v , м/c', fontsize=11)
 
-
-ax[0][0].plot ( x_x , v_x,label = 'Phas_diagram - Method Eiler',color = 'r')  
-ax[0][0].set_title('Phas_diagram - Method Eiler', fontsize=14, pad=10 , color = 'r') # Заголовок
-ax[0][0].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
-ax[0][0].set_ylabel('v , м/c', fontsize=11)  
-ax[0][1].plot (x , v ,label = 'X(t)')  
-ax[0][1].set_title('Phas_diagram - Method Hoina ', fontsize=14, pad=10) # Заголовок
-ax[0][1].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
-ax[0][1].set_ylabel('v , м/c', fontsize=11)
-
 ax[0][2].plot (x_rk , v_rk ,label = 'X(t)')  
-ax[0][2].set_title('Phas_diagram - Method Runge- Kuta ', fontsize=14, pad=10) # Заголовок
+ax[0][2].set_title('Phas_diagram - Method Runge Kutta ', fontsize=14, pad=10) # Заголовок
 ax[0][2].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
 ax[0][2].set_ylabel('v , м/c', fontsize=11)
+
+
+
+ax[1][0].plot (t_b_ei , x_b_ei ,label = 'X(t)')  
+ax[1][0].set_title('X(t) - Backward Eiler', fontsize=14, pad=10) # Заголовок
+ax[1][0].set_xlabel('t, c', fontsize=11)                 # Подпись оси X
+ax[1][0].set_ylabel('x , м', fontsize=11)
+
+ax[1][1].plot (t_b_ei , v_b_ei ,label = 'V(t) - Method Backward Eiler')  
+ax[1][1].set_title('V(t) - Method Backward Eiler', fontsize=14, pad=10) # Заголовок
+ax[1][1].set_xlabel('t, c', fontsize=11)                 # Подпись оси X
+ax[1][1].set_ylabel('v , м/c', fontsize=11)  
+ax[1][2].plot (x_b_ei , v_b_ei ,label = 'X(t)')  
+ax[1][2].set_title('Phas diagramm -  - Method Backward Eiler', fontsize=14, pad=10) # Заголовок
+ax[1][2].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
+ax[1][2].set_ylabel('v , м/c', fontsize=11)
+
 plt.tight_layout() 
 plt.show()
 
