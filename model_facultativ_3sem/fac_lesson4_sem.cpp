@@ -2,31 +2,37 @@
 #include <float.h>
 #include <math.h>
 #include <fstream>
+#include "json.hpp"
+using json = nlohmann::json;
 
 double f(double w , double x){
     return -w*w*x ;
 }
 
+
 int main(int argc, char *argv[]) {
     if (argc < 5){
     std::cout << "Incorrect input; Please write " << std::endl;
 }
-    double step = std::stod(argv[1]);
-    double x_0 = std::stod(argv[2]);
-    double v_0 = std::stod(argv[3]);
-    double T = std::stod(argv[4]);
-    double w = std::stod(argv[5]);
+    std::ifstream config_file("config.json");
+    json config = json::parse(config_file);
+    double step = config.value("step", 0.01);
+    double x_0 = config.value("x_0", 1.0);
+    double v_0 = config.value("v_0" , 0.0 );
+    double T = config.value("T", 10.0);
+    double w = config.value("w", 10.0);
     double x_0_copy = x_0;
     double v_0_copy = v_0;
     double x_0_1 = x_0;
     double v_0_1 = v_0;
     double x_copy = x_0;
     double v_copy = v_0;
+
       std::ofstream out;
       std::ofstream out1;
       std::ofstream out2;
       std::ofstream out3;
-    out.open("Data_oscilator_Eiler");
+    out.open(config["output_files"]["eiler"]);
     if (out.is_open()){ 
 
      out << "My  Initial data:_METHOD EILER" << std::endl;
@@ -46,7 +52,7 @@ int main(int argc, char *argv[]) {
     out.close();
     }
 
-out1.open("Data_oscilator_XOINA");
+out1.open(config["output_files"]["hoin"]);
 if (out1.is_open()){
     out1 << "My  Initial data_METHOD XOINA:" << std::endl;
      out1 <<"STEP = " << step <<" X_ 0 = " << x_0_copy << " V_0 = " << v_0_copy << " W = " << w << " T =  " << T << std::endl;
@@ -68,7 +74,7 @@ if (out1.is_open()){
 
 }
 out1.close();
-out2.open("Data_Rynge_Kuta");
+out2.open(config["output_files"]["Rk"]);
 if (out2.is_open()){
 
 
@@ -98,7 +104,7 @@ if (out2.is_open()){
 }
 out2.close();
 
-out3.open("Data_Backward_Eiler ");
+out3.open(config["output_files"]["Backward_Eiler"]);
     
     out3 << "My  Initial data_METHOD Backward Eiler:" << std::endl;
      out3 <<"STEP = " << step <<" X_ 0 = " << x_copy << " V_0 = " << v_copy << " W = " << w << " T =  " << T << std::endl;

@@ -3,7 +3,7 @@ import math
 import numpy as np
 import os
 import subprocess
-
+import json
 def search_ampl (arr , args): 
         w = args[4]
         step = float(args[0])
@@ -27,22 +27,32 @@ executable = "C:\\Roman\\MIPT\\C_plus_plus\\model_facultativ_3sem\\fac_lesson4_s
 
 compile_command = ["g++", cpp_file, "-o", executable]
 compile_result = subprocess.run(compile_command, capture_output=True, text=True)
-
+with open("config.json", "r", encoding="utf-8") as f:
+    config = json.load(f)
+step = config["step"]
+x_0 = config["x_0"]
+v_0 = config["v_0"]
+Time = config["T"]
+w = config["w"]
+eiler_path = config["output_files"]["eiler"]
+xoina_path = config["output_files"]["hoin"]
+runge_kutta_path = config["output_files"]["Rk"]
+backward_path = config["output_files"]["Backward_Eiler"]
     #step , x_0,v_0,T , w
-args = ["0.1", "1", "0", "25", "5"]
-run_result = subprocess.run([executable]  + args , capture_output=True, text=True)
+args = [str(step) , str(x_0) , str(v_0) , str(Time),str(w)]
+run_result = subprocess.run([executable, "config.json"], check=True, capture_output= True)
 
-with  open ("Data_oscilator_Eiler", "r") as data:
+with  open (eiler_path, "r") as data:
         lines = data.readlines()[3:]    
         t_x, x_x, v_x = np.loadtxt(lines, unpack=True)
         
-with  open ("Data_oscilator_XOINA", "r") as data:
+with  open (xoina_path, "r") as data:
         lines = data.readlines()[3:]    
         t, x, v = np.loadtxt(lines, unpack=True) 
-with  open ("Data_Rynge_Kuta", "r") as data:
+with  open (runge_kutta_path, "r") as data:
         lines = data.readlines()[3:]    
         t_rk, x_rk, v_rk = np.loadtxt(lines, unpack=True) 
-with open ("Data_Backward_Eiler") as data:
+with open (backward_path , "r") as data:
        lines = data.readlines()[3:]
        t_b_ei , x_b_ei , v_b_ei = np.loadtxt(lines, unpack=True) 
         
@@ -139,6 +149,10 @@ ax[0][0].set_title('Phas_diagram - Method Eiler', fontsize=14, pad=10 , color = 
 ax[0][0].set_xlabel('x, м', fontsize=11)                 # Подпись оси X
 ax[0][0].set_ylabel('v , м/c', fontsize=11)  
 
+ax[1][0].plot ( t_x , x_x,label = 'X(t) - Method Eiler',color = 'r')  
+ax[1][0].set_title('X(t) , Eiler', fontsize=14, pad=10 , color = 'r') # Заголовок
+ax[1][0].set_xlabel('t, c', fontsize=11)                 # Подпись оси X
+ax[1][0].set_ylabel('x , м', fontsize=11)  
 
 ax[0][1].plot (t , x ,label = 'X(t) - Method Xoina')  
 ax[0][1].set_title('X(t) - Method Xoina', fontsize=14, pad=10) # Заголовок
@@ -193,6 +207,18 @@ ax[1][2].set_xlabel('x, м', fontsize=11)                 # Подпись ос�
 ax[1][2].set_ylabel('v , м/c', fontsize=11)
 
 plt.tight_layout() 
+fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(10, 10))
+
+ax[0][0].plot(t_b_ei , x_b_ei , label = "X(T) - Method Backward Eiler ")
+ax[0][0].plot(t , x, label = "Method Hoina" , color = 'r')
+ax[0][0].plot(t_rk , x_rk , label = "Runge Kutta" , color= 'b')
+ax[0][0].set_title('X(t)- Methods', fontsize=14, pad=10 , color = 'r') # Заголовок
+ax[0][0].set_xlabel('t,c', fontsize=11)                 # Подпись оси X
+ax[0][0].set_ylabel('x , м', fontsize=11) 
+ax[0][0].legend() 
+ 
+
+
 plt.show()
 
 
